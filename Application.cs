@@ -8,5 +8,6 @@ namespace INFOGR2022Template
 {
     class Application
     {
+        
     }
 }

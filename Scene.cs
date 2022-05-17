@@ -8,5 +8,21 @@ namespace INFOGR2022Template
 {
     class Scene
     {
+        List<Primitive> primitives;
+        List<Light> lights;
+
+        public Scene()
+        {
+
+        }
+
+        Intersection Intersect()
+        {
+            foreach ( Primitive p in primitives )
+            {
+                //dichtsbijzijnde intersection
+                return;
+            }
+        }
     }
 }
