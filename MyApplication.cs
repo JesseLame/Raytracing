@@ -4,9 +4,13 @@ namespace Template
 	{
 		// member variables
 		public Surface screen;
+		public Scene scene;
+	
 		// initialize
 		public void Init()
 		{
+			scene = new Scene();
+
 		}
 		// tick: renders one frame
 		public void Tick()
