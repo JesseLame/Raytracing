@@ -17,6 +17,7 @@ namespace Template
             position = p;
             color = c;
         }
+        
     }
 
     class Sphere : Primitive
@@ -28,6 +29,10 @@ namespace Template
             this.radius = radius;
         }
 
+        public void debugdraw()
+        {
+            
+        }
     }
 
     class Plane : Primitive
@@ -38,5 +43,9 @@ namespace Template
         {
             this.distance = distance;
         }
+            public debugDraw()
+            {
+
+            }
     }
 }

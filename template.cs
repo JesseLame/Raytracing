@@ -36,8 +36,10 @@ namespace Template
 			ClientSize = new Size( 640, 400 );
 			app = new MyApplication();
 			app.screen = new Surface( Width, Height );
+			app.debugscreen = new Surface(10, 10);
 			Sprite.target = app.screen;
 			screenID = app.screen.GenTexture();
+
 			app.Init();
 		}
 		protected override void OnUnload( EventArgs e )

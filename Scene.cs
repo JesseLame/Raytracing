@@ -30,5 +30,10 @@ namespace Template
             primitives.Add(sphere2);
             primitives.Add(sphere3);
         }
+
+        public List<Primitive> GetPrimitives()
+        {
+            return primitives;
+        }
     }
 }
