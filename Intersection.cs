@@ -19,6 +19,5 @@ namespace Template
             this.nearestPrimetive = nearestPrimetive;
             this.normal = normal;
         }
-
     }
 }

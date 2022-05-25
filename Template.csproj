@@ -54,6 +54,7 @@
     <Compile Include="MyApplication.cs" />
     <Compile Include="Primitive.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Ray.cs" />
     <Compile Include="Raytracer.cs" />
     <Compile Include="Scene.cs" />
     <Compile Include="surface.cs" />

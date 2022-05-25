@@ -7,15 +7,15 @@ using OpenTK;
 
 namespace Template
 {
-    class Ray
+    public class Ray
     {
-        Vector3 direction;
-        Vector3 origin;
-        float distance;
+        public Vector3 direction;
+        public Vector3 origin;
+        public float distance;
 
         public Ray(Vector3 direction, Vector3 origin, float distance)
         {
-            this.direction = direction;
+            this.direction = direction.Normalized();
             this.origin = origin;
             this.distance = distance;
         }
