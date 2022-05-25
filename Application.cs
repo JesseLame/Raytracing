@@ -4,10 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace INFOGR2022Template
+namespace Template
 {
     class Application
     {
-        
+        public Scene scene;
+
+
+
     }
 }

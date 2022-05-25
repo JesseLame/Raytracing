@@ -26,6 +26,7 @@ namespace Template
 		static int screenID;            // unique integer identifier of the OpenGL texture
 		static MyApplication app;       // instance of the application
 		static bool terminated = false; // application terminates gracefully when this is true
+		Raytracer raytracer;
 		protected override void OnLoad( EventArgs e )
 		{
 			// called during application initialization
@@ -33,12 +34,12 @@ namespace Template
 			GL.Enable( EnableCap.Texture2D );
 			GL.Disable( EnableCap.DepthTest );
 			GL.Hint( HintTarget.PerspectiveCorrectionHint, HintMode.Nicest );
-			ClientSize = new Size( 640, 400 );
-			app = new MyApplication();
-			app.screen = new Surface( Width, Height );
-			Sprite.target = app.screen;
-			screenID = app.screen.GenTexture();
-			app.Init();
+			ClientSize = new Size( 1280, 800 );
+			raytracer = new Raytracer();
+			raytracer.screen = new Surface( Width, Height );
+			Sprite.target = raytracer.screen;
+			screenID = raytracer.screen.GenTexture();
+			raytracer.Init();
 		}
 		protected override void OnUnload( EventArgs e )
 		{
@@ -62,29 +63,81 @@ namespace Template
 		}
 		protected override void OnRenderFrame( FrameEventArgs e )
 		{
-			// called once per frame; render
-			app.Tick();
-			if( terminated )
+
+			GL.ClearColor(Color.Black);
+			GL.Enable(EnableCap.Texture2D);
+			GL.Disable(EnableCap.DepthTest);
+			GL.Color3(1.0f, 1.0f, 1.0f);
+
+			
+			//raytracer.debugOutput();
+			//raytracer.Render();
+			//check if we have to exit
+			if (terminated)
 			{
 				Exit();
 				return;
 			}
-			// convert MyApplication.screen to OpenGL texture
-			GL.BindTexture( TextureTarget.Texture2D, screenID );
-			GL.TexImage2D( TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba,
-						   app.screen.width, app.screen.height, 0,
+
+			//renders the rays
+			int box = Math.Min(Width, Height);
+			GL.Viewport(0, 0, box, box);
+			//raytracer.Render();
+
+			// clear window contents            
+			GL.Clear(ClearBufferMask.ColorBufferBit);
+
+			// setup camera
+			GL.MatrixMode(MatrixMode.Modelview);
+			GL.LoadIdentity();
+			GL.MatrixMode(MatrixMode.Projection);
+			GL.LoadIdentity();
+
+			//prepares to draw the screen texture
+			GL.ClearColor(Color.Black);
+			GL.Enable(EnableCap.Texture2D);
+			GL.Disable(EnableCap.DepthTest);
+			GL.Color3(1.0f, 1.0f, 1.0f);
+
+			// convert Game.screen to OpenGL texture
+			GL.BindTexture(TextureTarget.Texture2D, screenID);
+			GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba,
+						   raytracer.screen.width, raytracer.screen.height, 0,
 						   OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
-						   PixelType.UnsignedByte, app.screen.pixels
+						   PixelType.UnsignedByte, raytracer.screen.pixels
 						 );
+
+
 			// draw screen filling quad
-			GL.Begin( PrimitiveType.Quads );
-			GL.TexCoord2( 0.0f, 1.0f ); GL.Vertex2( -1.0f, -1.0f );
-			GL.TexCoord2( 1.0f, 1.0f ); GL.Vertex2( 1.0f, -1.0f );
-			GL.TexCoord2( 1.0f, 0.0f ); GL.Vertex2( 1.0f, 1.0f );
-			GL.TexCoord2( 0.0f, 0.0f ); GL.Vertex2( -1.0f, 1.0f );
+			GL.Begin(PrimitiveType.Quads);
+			GL.TexCoord2(0.0f, 1.0f); GL.Vertex2(-1.0f, -1.0f);
+			GL.TexCoord2(1.0f, 1.0f); GL.Vertex2(1.0f, -1.0f);
+			GL.TexCoord2(1.0f, 0.0f); GL.Vertex2(1.0f, 1.0f);
+			GL.TexCoord2(0.0f, 0.0f); GL.Vertex2(-1.0f, 1.0f);
 			GL.End();
-			// tell OpenTK we're done rendering
+
+			//reverts the needed properties to convert the screen to texture
+			GL.Enable(EnableCap.DepthTest);
+			GL.Disable(EnableCap.Texture2D);
+			GL.Clear(ClearBufferMask.DepthBufferBit);
+
+			
+
+			//renders the debug
+			GL.PushAttrib(AttribMask.ViewportBit); //Push current viewport attributes to a sta ck
+			GL.Viewport(Width >> 1, 0, box, box); //Create a new viewport bottom left for the debug output.
+			//raytracer.debugOutput();
+			raytracer.drawDebug();
+			//we want to texture stuff again and restor our viewport
+
+			GL.PopAttrib();//Reset to the old viewport.
+			GL.Enable(EnableCap.Texture2D);
+
+			//tell openTK we are gonna work on or next frame
 			SwapBuffers();
+
+			//write how long the frame took to complete
+			//Console.WriteLine(processedframes / (stopwatch.ElapsedMilliseconds * 0.001f));
 		}
 		public static void Main( string[] args )
 		{

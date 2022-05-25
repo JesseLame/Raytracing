@@ -3,25 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenTK;
 
-namespace INFOGR2022Template
+namespace Template
 {
 
     class Light 
     {
-        int locx, locy, locz;
-        float red, green, blue;
+        Vector3 position;
+        Vector3 intensity;
 
-        public Light(int x, int y, int z, float r, float g, float b)
+        public Light(Vector3 position, Vector3 intensity)
         {
-            locx = x;
-            locy = y;
-            locz = z;
-            red = r;
-            green = g;
-            blue = b;
+            this.position = position;
+            this.intensity = intensity;
         }
-
     }
     
 
