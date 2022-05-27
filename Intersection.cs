@@ -7,11 +7,12 @@ using OpenTK;
 
 namespace Template
 {
-    class Intersection
+    public class Intersection
     {
         public float distance;
         public Primitive nearestPrimetive;
         public Vector3 normal;
+        public Vector3 point;
 
         public Intersection(float distance, Primitive nearestPrimetive, Vector3 normal)
         {

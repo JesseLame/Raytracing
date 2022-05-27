@@ -71,7 +71,7 @@ namespace Template
 
 			
 			//raytracer.debugOutput();
-			//raytracer.Render();
+			raytracer.Render();
 			//check if we have to exit
 			if (terminated)
 			{

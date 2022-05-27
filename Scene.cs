@@ -25,16 +25,21 @@ namespace Template
             Primitive sphere2 = new Sphere(new Vector3(0f, 0, 6f), 1.5f, new Vector3(0, 1, 0));
             Primitive sphere3 = new Sphere(new Vector3(3.5f, 0, 6f), 1.5f, new Vector3(0, 0, 1));
 
+            //Primitive sphere1 = new Sphere(new Vector3(3, 1, 0), 1.5f, new Vector3(1, 0, 0));
+            //Primitive sphere2 = new Sphere(new Vector3(0f, 1, -1), 1.5f, new Vector3(0, 1, 0));
+            //Primitive sphere3 = new Sphere(new Vector3(-5,1, 0), 1.5f, new Vector3(0, 0, 1));
+            //Primitive sphere4 = new Sphere(new Vector3(-2, 1, 0), 1.5f, new Vector3(0, 0, 1));
+
             //primitives.Add(floorPlane);
             primitives.Add(sphere1);
             primitives.Add(sphere2);
             primitives.Add(sphere3);
         }
 
-        public Vector3 ClosestIntersection(Ray ray)
+        public Intersection ClosestIntersection(Ray ray)
         {
             float closest = Int32.MaxValue;
-            Intersection closestIntersect;
+            Intersection closestIntersect = new Intersection(int.MaxValue, new Sphere(new Vector3(0,0,0),0f,new Vector3(0,0,0)), new Vector3());
             //Return black when there are no intersections
             Vector3 retColor = new Vector3(0,0,0);
 
@@ -44,11 +49,12 @@ namespace Template
                 {
                     closest = p.intersects(ray);
                     closestIntersect = new Intersection(closest, p, new Vector3());
-                    retColor = closestIntersect.nearestPrimetive.color;
+                    closestIntersect.point = ray.direction * closestIntersect.distance;
+                    //retColor = closestIntersect.nearestPrimetive.color;
                 }
             }                
 
-            return retColor;
+            return closestIntersect;
         }
     }
 }

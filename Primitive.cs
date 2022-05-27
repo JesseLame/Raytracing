@@ -20,6 +20,7 @@ namespace Template
         public abstract float intersects(Ray ray);
 
         public abstract void drawDebug(Surface screen);
+
     }
 
     class Sphere : Primitive
@@ -35,28 +36,23 @@ namespace Template
 
         public override void drawDebug(Surface screen)
         {
-            //GL.Begin(PrimitiveType.LineLoop);
-            //GL.Color3(color);
-            //for (int i = 0; i <= 300; i++)
-            //{
-            //    float angle = (float)(2 * Math.PI * i) / 300.0f;
-            //    float x = (float)Math.Cos(angle) * radius;
-            //    float y = (float)Math.Sin(angle) * radius;
-            //    GL.Vertex2(x + position.X, y + position.Z);
-            //}
-            //GL.End();
-            for(int i = 0; i < 360; i++)
+            GL.Begin(PrimitiveType.LineLoop);
+            GL.Color3(color);
+            for (int i = 0; i < 360; i++)
             {
                 double a = position.X + radius * Math.Cos(i);
-                double b = position.Y + radius * Math.Sin(i);
+                double b = position.Z + radius * Math.Sin(i);
                 Vector2 v = new Vector2();
                 v.X = (float)a - position.X;
                 v.Y = (float)b - position.Z;
 
+
+
                 Vector2 u = v.PerpendicularRight;
                 u.Normalize();
-                screen.Line((int)a, (int)b, (int)(a + u.X), (int)(b + u.Y), MixColor((int)color.X, (int)color.Y, (int)color.Z));
+                GL.Vertex2(a , b);
             }
+            GL.End();
         }
 
         public int MixColor(int red, int green, int blue)
@@ -74,23 +70,51 @@ namespace Template
             //float t2 = Vector3.Dot(position - ray.origin, ray.direction) + x;
 
 
-            float delta = (float)(Math.Pow(Vector3.Dot(ray.direction, ray.origin - position), 2) - (Math.Pow(Math.Sqrt(Math.Pow((position.X - ray.origin.X), 2) + Math.Pow(position.Y - ray.origin.Y, 2)),2) - Math.Pow(radius, 2)));
-            float t = -(float)((Vector3.Dot(ray.direction, (ray.origin - position)) + Math.Sqrt(delta)));
+            //float delta = (float)(Math.Pow(Vector3.Dot(ray.direction, ray.origin - position), 2) - (Math.Pow(Math.Sqrt(Math.Pow((position.X - ray.origin.X), 2) + Math.Pow(position.Y - ray.origin.Y, 2)),2) - Math.Pow(radius, 2)));
+            //float t = -(float)((Vector3.Dot(ray.direction, (ray.origin - position)) + Math.Sqrt(delta)));
 
+
+            Vector3 c = position - ray.origin;
+            float t = Vector3.Dot(c, ray.direction);
             Vector3 tVec = ray.origin + t * ray.direction;
 
-            float y = (float)Math.Sqrt(Math.Pow(tVec.X - position.X, 2) + Math.Pow(tVec.Y - position.Y, 2) + Math.Pow(tVec.Z - position.Z, 2));
-            float x = (float)Math.Sqrt(Math.Pow(radius, 2) - Math.Pow(y, 2));
+            ////float p2 = tVec.
 
-            float t1 = Vector3.Dot(position - ray.origin, ray.direction) - x;
+            Vector3 yVec = tVec - position;
+
+            float x = (float)Math.Sqrt(Math.Pow(radius, 2) - Math.Pow(yVec.Length, 2));
+
+            ////float y = (float)Math.Sqrt(Math.Pow(tVec.X - position.X, 2) + Math.Pow(tVec.Y - position.Y, 2));
+            ////float x = (float)Math.Sqrt(Math.Pow(radius, 2) - Math.Pow(y, 2));
+
+            float t1 = Vector3.Dot(ray.origin - position, ray.direction) - x;
             float t2 = Vector3.Dot(position - ray.origin, ray.direction) + x;
 
-            if (delta > 0)
-                return t1;            
+            if (t1 < Int32.MaxValue)
+                return t1;
 
             return Int32.MaxValue;
+
+
+
+
+            //Vector3 q = c - t * ray.direction;
+            //float p2 = q.LengthSquared;
+            //if (p2 > radius)
+            //    return Int32.MaxValue;
+
+            //float rt = (float)Math.Sqrt(Math.Pow(c.Length, 2) - Math.Pow(q.Length, 2));
+            //t -= (float)Math.Sqrt(Math.Pow(radius, 2) - p2);
+            //if ((t < rt) && t > 0)
+            //    return t;
+
+            //return Int32.MaxValue;
+
+
         }
     }
+
+    
 
     class Plane : Primitive
     {

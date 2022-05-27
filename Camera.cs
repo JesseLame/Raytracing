@@ -20,7 +20,7 @@ namespace Template
 
         Vector3 planeVec;
 
-        float distToCamera = 1.5f;
+        float distToCamera = 1f;
 
         public Camera(Vector3 pos, Vector3 look, Vector3 up, Surface s)
         {
@@ -40,30 +40,27 @@ namespace Template
 
             //Left uppercorner
             plane1 = planeCenter + planeVec + upDirection;
-            plane1 = plane1 * 100;
 
             //Right uppercorner
             plane2 = planeCenter - planeVec + upDirection;
-            plane2 = plane2 * 100;
-
             //Right downcorner
             plane3 = planeCenter - planeVec - upDirection;
-            plane3 = plane3 * 100;
 
             //Left down corner
             plane4 = planeCenter + planeVec - upDirection;
-            plane4 = plane4 * 100;
         }
+
+       
 
         public Ray Ray(int x, int y)
         {
-            Vector3 u = plane1 - plane2;
-            Vector3 v = plane4 - plane1;
+            Vector3 u = plane2 - plane1;
+            Vector3 v = plane3 - plane2;
 
-            float a = x / screen.width;
-            float b = y / screen.height;
+            float a = (float)x / (float)screen.width;
+            float b = (float)y / (float)screen.height;
 
-            Vector3 p = plane1 + (a * u) + (b * v);
+            Vector3 p = plane1 + (a * u.Normalized()) + (b * v.Normalized());
 
             Vector3 dir = p - position;
 

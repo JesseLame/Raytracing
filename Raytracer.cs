@@ -21,7 +21,7 @@ namespace Template
 
         public void Init()
         {
-            camera = new Camera(new Vector3(0, 0, 0), new Vector3(0, 0, 1), new Vector3(0, 1, 0), screen);
+            camera = new Camera(new Vector3(0,0,0), new Vector3(0, 0, 1), new Vector3(0, 1, 0), screen);
         }
 
         public void Render()
@@ -44,40 +44,63 @@ namespace Template
         {
             screen.Clear(0);
 
+
             GL.Disable(EnableCap.Texture2D);
 
             GL.MatrixMode(MatrixMode.Projection);
             Matrix4 m = Matrix4.CreateScale(1 / 10.0f);
             GL.LoadMatrix(ref m);
 
-            int c2x = screen.width / 4;
-            int c2y = ((screen.height / 6) * 5);
+            GL.Begin(PrimitiveType.Points);
+            GL.Vertex2(camera.position.Xz);
+            GL.End();
 
-            //screen.Box((int)camera.position.X, (int)camera.position.Y, (int)camera.position.X + 1, (int)camera.position.Y + 1, MixColor(0, 255, 0));
-            screen.Box(c2x - 2, c2y - 2, c2x + 2, c2y + 2, MixColor(255, 255, 255));
-
-            //screen.Line(screen.width / 5, (screen.height / 6) * 4, (screen.width / 5) + screen.width / 10, (screen.height / 6) * 4, MixColor(0, 255, 0));
-
-            Vector2 shiftVector = new Vector2();
-            shiftVector.X = c2x - camera.position.X;
-            shiftVector.Y = c2y - camera.position.Z;
-
-            double alpha = (screen.width / 10) /
-                Math.Sqrt(Math.Pow(camera.plane2.X - camera.plane1.X, 2) +
-                Math.Pow(camera.plane2.Z - camera.plane1.Z, 2));
-
-            Vector2 toLeft = new Vector2((camera.position.X - camera.plane1.X), (camera.position.Z - camera.plane1.Z));
-            Vector2 toRight = new Vector2((camera.position.X - camera.plane2.X), (camera.position.Z - camera.plane2.Z)); ;
+            GL.Begin(PrimitiveType.Lines);
+            GL.Vertex2(camera.plane1.Xz);
+            GL.Vertex2(camera.plane2.Xz);
+            GL.End();
 
 
+            //int c2x = screen.width / 4;
+            //int c2y = ((screen.height / 6) * 5);
 
-            screen.Line((int)(c2x + toLeft.X * alpha), (int)(c2y + toLeft.Y * alpha),
-                (int)(c2x + toRight.X * alpha), (int)(c2y + toRight.Y * alpha), MixColor(255, 255, 255));
+            ////screen.Box((int)camera.position.X, (int)camera.position.Y, (int)camera.position.X + 1, (int)camera.position.Y + 1, MixColor(0, 255, 0));
+            //screen.Box(c2x - 2, c2y - 2, c2x + 2, c2y + 2, MixColor(255, 255, 255));
+
+            ////screen.Line(screen.width / 5, (screen.height / 6) * 4, (screen.width / 5) + screen.width / 10, (screen.height / 6) * 4, MixColor(0, 255, 0));
+
+            //Vector2 shiftVector = new Vector2();
+            //shiftVector.X = c2x - camera.position.X;
+            //shiftVector.Y = c2y - camera.position.Z;
+
+            //double alpha = (screen.width / 10) /
+            //    Math.Sqrt(Math.Pow(p2.X - p1.X, 2) +
+            //    Math.Pow(p2.Z - p1.Z, 2));
+
+            //Vector2 toLeft = new Vector2((camera.position.X - p1.X), (camera.position.Z - p1.Z));
+            //Vector2 toRight = new Vector2((camera.position.X - p2.X), (camera.position.Z - p2.Z)); ;
+
+
+
+            //screen.Line((int)(c2x + toLeft.X * alpha), (int)(c2y + toLeft.Y * alpha),
+            //    (int)(c2x + toRight.X * alpha), (int)(c2y + toRight.Y * alpha), MixColor(255, 255, 255));
 
             foreach (Primitive p in scene.primitives)
             {
                 p.drawDebug(screen);
             }
+
+            GL.Begin(PrimitiveType.Lines);
+            GL.Color3(new Vector3(1,0,0));
+            for (int i = 0; i <= screen.width; i += 128)
+            {
+                Ray ray = camera.Ray(i, screen.height / 2);
+                Intersection inter = scene.ClosestIntersection(ray);
+
+                GL.Vertex2(camera.position.Xz);
+                GL.Vertex2(camera.position.X + ray.direction.X * inter.distance, camera.position.Z + ray.direction.Z * inter.distance);
+            }
+            GL.End();
         }
 
         public void debugOutput()
