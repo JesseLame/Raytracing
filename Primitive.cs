@@ -78,25 +78,18 @@ namespace Template
             float t = Vector3.Dot(c, ray.direction);
             Vector3 tVec = ray.origin + t * ray.direction;
 
-            ////float p2 = tVec.
+            //Vector3 yVec = tVec - position;
 
-            Vector3 yVec = tVec - position;
+            float y = (float)Math.Sqrt(Math.Pow(tVec.X - position.X, 2) + Math.Pow(tVec.Y - position.Y, 2));
+            float x = (float)Math.Sqrt(Math.Pow(radius, 2) - Math.Pow(y, 2));
 
-            float x = (float)Math.Sqrt(Math.Pow(radius, 2) - Math.Pow(yVec.Length, 2));
-
-            ////float y = (float)Math.Sqrt(Math.Pow(tVec.X - position.X, 2) + Math.Pow(tVec.Y - position.Y, 2));
-            ////float x = (float)Math.Sqrt(Math.Pow(radius, 2) - Math.Pow(y, 2));
-
-            float t1 = Vector3.Dot(ray.origin - position, ray.direction) - x;
+            float t1 = Vector3.Dot(position - ray.origin, ray.direction) - x;
             float t2 = Vector3.Dot(position - ray.origin, ray.direction) + x;
 
             if (t1 < Int32.MaxValue)
                 return t1;
 
             return Int32.MaxValue;
-
-
-
 
             //Vector3 q = c - t * ray.direction;
             //float p2 = q.LengthSquared;

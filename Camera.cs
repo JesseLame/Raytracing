@@ -43,6 +43,7 @@ namespace Template
 
             //Right uppercorner
             plane2 = planeCenter - planeVec + upDirection;
+
             //Right downcorner
             plane3 = planeCenter - planeVec - upDirection;
 
@@ -60,7 +61,7 @@ namespace Template
             float a = (float)x / (float)screen.width;
             float b = (float)y / (float)screen.height;
 
-            Vector3 p = plane1 + (a * u.Normalized()) + (b * v.Normalized());
+            Vector3 p = plane1 + (a * u) + (b * v);
 
             Vector3 dir = p - position;
 
