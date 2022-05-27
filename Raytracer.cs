@@ -21,7 +21,7 @@ namespace Template
 
         public void Init()
         {
-            camera = new Camera(new Vector3(0,0,0), new Vector3(0, 0, 1), new Vector3(0, 1, 0), screen);
+            camera = new Camera(new Vector3(0,0,-10), new Vector3(0, 0, 1), new Vector3(0, 1, 0), screen);
         }
 
         public void Render()
@@ -31,13 +31,67 @@ namespace Template
             {
                 for(int y = 0; y < screen.height; y++)
                 {
-                    //Ray ray = camera.Ray(x, y);
-                    //Vector3 color = scene.ClosestIntersection(ray);
+                    Ray ray = camera.Ray(x, y);
+                    Intersection inter = scene.ClosestIntersection(ray);
+                    Vector3 color = calcPixelColor(inter);
 
-                    //screen.pixels[x + y * screen.width] = MixColor((int)(color.X * 255), (int)(color.Y * 255), (int)(color.Z * 255));
-                    screen.pixels[x + y * screen.width] = MixColor(255,0,0);
+                    screen.pixels[x + y * screen.width] = MixColor((int)(color.X * 255), (int)(color.Y * 255), (int)(color.Z * 255));
                 }
             }
+        }
+
+        public Vector3 calcPixelColor(Intersection inter)
+        {
+            float distanceLight;
+            Vector3 l;
+            Vector3 i = inter.point;
+            Vector3 lightEnergy;
+
+            foreach (Light light in scene.lights)
+            {
+                l = light.position - i;
+                distanceLight = l.Length;
+                l.Normalize();
+
+                Intersection inter = scene.ClosestIntersection(new Ray(l, i, distanceLight));
+                if ((inter.distance < distanceLight - 1) && 1 < inter.distance)
+                { }
+                else
+                {
+                    lightColor(light, distanceLight);
+                }
+            }
+        }
+
+        public void hasLight(Vector3 i)
+        {
+            float distanceLight;
+            Vector3 l;
+            Vector3 lightEnergy;
+
+            foreach(Light light in scene.lights)
+            {
+                l = light.position - i;
+                distanceLight = l.Length;
+                l.Normalize();
+
+                Intersection inter = scene.ClosestIntersection(new Ray(l, i, distanceLight));
+                if ((inter.distance < distanceLight - 1) && 1 < inter.distance)
+                { }
+                else
+                {
+                    lightColor(light, distanceLight);
+                }
+            }
+
+
+            return true;
+        }
+
+        public Vector3 lightColor(Light light, float radius)
+        {
+            Vector3 lightEnergy = light.position * (float)(1 / Math.Pow(radius, 2));
+
         }
 
         public void drawDebug()

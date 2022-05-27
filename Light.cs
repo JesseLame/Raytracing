@@ -8,9 +8,9 @@ using OpenTK;
 namespace Template
 {
 
-    class Light 
+    public class Light 
     {
-        Vector3 position;
+        public Vector3 position;
         Vector3 intensity;
 
         public Light(Vector3 position, Vector3 intensity)

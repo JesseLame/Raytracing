@@ -10,7 +10,7 @@ namespace Template
     public class Scene
     {
         public List<Primitive> primitives;
-        List<Light> lights;
+        public List<Light> lights;
 
         Primitive floorPlane;
 
@@ -24,6 +24,10 @@ namespace Template
             Primitive sphere1 = new Sphere(new Vector3(-3.5f, 0, 6f), 1.5f, new Vector3(1, 0, 0));
             Primitive sphere2 = new Sphere(new Vector3(0f, 0, 6f), 1.5f, new Vector3(0, 1, 0));
             Primitive sphere3 = new Sphere(new Vector3(3.5f, 0, 6f), 1.5f, new Vector3(0, 0, 1));
+
+            Light light = new Light(new Vector3(-5, 0, 5.5f), new Vector3(1,1,1));
+
+            lights.Add(light);
 
             //Primitive sphere1 = new Sphere(new Vector3(3, 1, 0), 1.5f, new Vector3(1, 0, 0));
             //Primitive sphere2 = new Sphere(new Vector3(0f, 1, -1), 1.5f, new Vector3(0, 1, 0));

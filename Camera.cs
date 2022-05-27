@@ -20,7 +20,7 @@ namespace Template
 
         Vector3 planeVec;
 
-        float distToCamera = 1f;
+        float distToCamera = 2.5f;
 
         public Camera(Vector3 pos, Vector3 look, Vector3 up, Surface s)
         {
