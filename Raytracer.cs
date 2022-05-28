@@ -40,29 +40,42 @@ namespace Template
             }
         }
 
+        //berekent bij Punt I van intersection met ray de kleur van de pixel 
         public Vector3 calcPixelColor(Intersection inter)
         {
+            Vector3 pixelColor = inter.nearestPrimetive.color;
             float distanceLight;
+           //vector from intersection to light
             Vector3 l;
+
             Vector3 i = inter.point;
             Vector3 lightEnergy;
 
             foreach (Light light in scene.lights)
             {
+                
                 l = light.position - i;
                 distanceLight = l.Length;
                 l.Normalize();
 
-                Intersection inter = scene.ClosestIntersection(new Ray(l, i, distanceLight));
-                if ((inter.distance < distanceLight - 1) && 1 < inter.distance)
-                { }
+                Intersection shadowIntersect = scene.ClosestIntersection(new Ray(l, i, distanceLight));
+             //pixel wordt belicht door lichtbron; er is geen obstakel
+                if (!((shadowIntersect.distance < distanceLight - 1) && 1 < shadowIntersect.distance))
+                {
+                    
+                    return reflectedLight(light, distanceLight, pixelColor, shadowIntersect, l);
+                }
+                //licht wordt tegengehouden door ander object
                 else
                 {
-                    lightColor(light, distanceLight);
+                    return new Vector3(0, 0, 0);
                 }
             }
+            return new Vector3(0, 0, 0);
+
         }
 
+       /* 
         public void hasLight(Vector3 i)
         {
             float distanceLight;
@@ -87,10 +100,22 @@ namespace Template
 
             return true;
         }
-
-        public Vector3 lightColor(Light light, float radius)
+*/
+        //reflected light
+        public Vector3 reflectedLight(Light light, float radius, Vector3 color, Intersection inter, Vector3 l)
         {
-            Vector3 lightEnergy = light.position * (float)(1 / Math.Pow(radius, 2));
+            Vector3 result = new Vector3();
+            //waarom staat light.position in de lightEnergy?
+            Vector3 lightEnergy =// light.position * ;
+
+            //reflected light => entry-wise product
+            result.X = lightEnergy.X * color.X;
+            result.Y = lightEnergy.Y * color.Y;
+            result.Z = lightEnergy.Z * color.Z;
+
+            //1/r^2 * ELight o Kd * max(0, N * L)
+            result = (float)(1 / Math.Pow(radius, 2)) * result * Math.Max(0, Vector3.Dot(inter.normal, l));
+            
 
         }
 

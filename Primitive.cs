@@ -11,6 +11,7 @@ namespace Template
     public abstract class Primitive
     {
         public Vector3 color;
+        public Vector3 position;
 
         public Primitive(Vector3 c)
         {
@@ -23,9 +24,9 @@ namespace Template
 
     }
 
-    class Sphere : Primitive
+    public class Sphere : Primitive
     {
-        Vector3 position;
+        public Vector3 position;
         float radius;
 
         public Sphere(Vector3 position, float radius, Vector3 color) : base(color)

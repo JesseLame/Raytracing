@@ -56,8 +56,9 @@ namespace Template
                     closestIntersect.point = ray.direction * closestIntersect.distance;
                     //retColor = closestIntersect.nearestPrimetive.color;
                 }
-            }                
-
+            }
+            closestIntersect.calculateNormal();
+           
             return closestIntersect;
         }
     }

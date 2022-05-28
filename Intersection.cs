@@ -20,5 +20,10 @@ namespace Template
             this.nearestPrimetive = nearestPrimetive;
             this.normal = normal;
         }
+
+        public void calculateNormal()
+        {
+            normal = nearestPrimetive.position - point;
+        }
     }
 }
