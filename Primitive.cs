@@ -10,12 +10,13 @@ namespace Template
 {
     public abstract class Primitive
     {
-        public Vector3 color;
+        public Material material;
         public Vector3 position;
+        public Vector3 normal;
 
-        public Primitive(Vector3 c)
+        public Primitive(Material material)
         {
-            color = c;
+            this.material = material;
         }
 
         public abstract float intersects(Ray ray);
@@ -26,10 +27,10 @@ namespace Template
 
     public class Sphere : Primitive
     {
-        public Vector3 position;
+        //Vector3 position;
         float radius;
 
-        public Sphere(Vector3 position, float radius, Vector3 color) : base(color)
+        public Sphere(Vector3 position, float radius, Material material) : base(material)
         {
             this.radius = radius;
             this.position = position;
@@ -38,7 +39,7 @@ namespace Template
         public override void drawDebug(Surface screen)
         {
             GL.Begin(PrimitiveType.LineLoop);
-            GL.Color3(color);
+            GL.Color3(material.color);
             for (int i = 0; i < 360; i++)
             {
                 double a = position.X + radius * Math.Cos(i);
@@ -47,18 +48,11 @@ namespace Template
                 v.X = (float)a - position.X;
                 v.Y = (float)b - position.Z;
 
-
-
                 Vector2 u = v.PerpendicularRight;
                 u.Normalize();
                 GL.Vertex2(a , b);
             }
             GL.End();
-        }
-
-        public int MixColor(int red, int green, int blue)
-        {
-            return (red << 16) + (green << 8) + blue;
         }
 
         public override float intersects(Ray ray)
@@ -91,20 +85,6 @@ namespace Template
                 return t1;
 
             return Int32.MaxValue;
-
-            //Vector3 q = c - t * ray.direction;
-            //float p2 = q.LengthSquared;
-            //if (p2 > radius)
-            //    return Int32.MaxValue;
-
-            //float rt = (float)Math.Sqrt(Math.Pow(c.Length, 2) - Math.Pow(q.Length, 2));
-            //t -= (float)Math.Sqrt(Math.Pow(radius, 2) - p2);
-            //if ((t < rt) && t > 0)
-            //    return t;
-
-            //return Int32.MaxValue;
-
-
         }
     }
 
@@ -112,53 +92,63 @@ namespace Template
 
     class Plane : Primitive
     {
-        float distance;
-        Vector3 normal;
-        Vector3 pointOnPlane;
+        Vector3 plane1, plane2, plane3, plane4;
+        Vector3 side1, side2;
 
-        public Plane(Vector3 normal, float distance, Vector3 color) : base(color)
+        public Plane(Vector3 normal, Vector3 side1, Vector3 side2, Vector3 position, Material material) : base( material)
         {
-            this.distance = distance;
             this.normal = normal.Normalized();
             //(-AD, -BD, -CD) point on plane where normal vector = (A,B,C) and D = distance
-            pointOnPlane = new Vector3(-(this.normal.X * distance), -(this.normal.Y * distance), -(this.normal.Z * distance));
+            this.position = position;
+            this.side1 = side1;
+            this.side2 = side2;
         }
 
         public override void drawDebug(Surface screen)
         {
-            throw new NotImplementedException();
+            
         }
 
         public override float intersects(Ray ray)
         {
-            //        p0, p1: Define the line.
-            //        p_co, p_no: define the plane:
-            //        p_co Is a point on the plane(plane coordinate).
-            //        p_no Is a normal vector defining the plane direction;
-            //        (does not need to be normalized).
+            //Kinda woring
+            //float denominator = Vector3.Dot(ray.direction, -normal);
 
-            //# point-normal plane
-            //              def isect_line_plane_v3(p0, p1, p_co, p_no, epsilon= 1e-6):
-            //    u = p1 - p0
-            //    dot = p_no * u
-            //    if abs(dot) > epsilon:
-            //        w = p0 - p_co
-            //        fac = -(plane * w) / dot
-            //        return p0 + (u * fac)
+            //if (denominator > 0.00001f)
+            //{
+            //    float t = Vector3.Dot(position - ray.origin, normal) / denominator;
 
-            //    return None
-            float epsilon = 1e-6f;
-            float dot = Vector3.Dot(normal, ray.direction);
-            if (Math.Abs(dot) > epsilon)
+            //    Vector3 p = ray.origin + ray.direction * t;
+
+            //    return p.Length;
+            //}
+            //else
+            //{
+            //    return Int32.MaxValue;
+            //}
+
+            float denominator = Vector3.Dot(ray.direction, normal);
+
+            if (denominator > 0.00001f)
             {
-                Vector3 w = ray.origin - pointOnPlane;
-                Vector3 fac = -(normal * w) / dot;
-                Vector3 intersection = ray.origin + (ray.direction * fac);
-                return (float)Math.Sqrt(Math.Pow(intersection.X - ray.origin.X, 2) + Math.Pow(intersection.Y - ray.origin.Y, 2) + Math.Pow(intersection.Z - ray.origin.Z, 2));
-            } else
+                float t = Vector3.Dot(-(position - ray.origin), normal) / denominator;
+
+                Vector3 p = ray.origin + ray.direction * t;
+
+                return p.Length;
+            }
+            else
             {
                 return Int32.MaxValue;
             }
+
+            //Nina code TODO afmaken
+            //if(Vector3.Dot(ray.direction, normal) != 0)
+            //{
+            //    float a = Vector3.Dot((position - ray.origin), normal) / Vector3.Dot(ray.direction, normal);
+            //    Vector3 p = ray.origin + a * ray.direction;
+
+            //}
         }
     }
 }
