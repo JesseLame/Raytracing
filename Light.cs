@@ -11,7 +11,7 @@ namespace Template
     public class Light 
     {
         public Vector3 position;
-        Vector3 intensity;
+        public Vector3 intensity;
 
         public Light(Vector3 position, Vector3 intensity)
         {

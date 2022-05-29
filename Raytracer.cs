@@ -45,7 +45,7 @@ namespace Template
         {
             Vector3 pixelColor = inter.nearestPrimetive.color;
             float distanceLight;
-           //vector from intersection to light
+           //vector from light to intersection point
             Vector3 l;
 
             Vector3 i = inter.point;
@@ -68,10 +68,10 @@ namespace Template
                 //licht wordt tegengehouden door ander object
                 else
                 {
-                    return new Vector3(0, 0, 0);
+                    return inter.nearestPrimetive.color;
                 }
             }
-            return new Vector3(0, 0, 0);
+            return new Vector3(0,1,0);
 
         }
 
@@ -106,7 +106,7 @@ namespace Template
         {
             Vector3 result = new Vector3();
             //waarom staat light.position in de lightEnergy?
-            Vector3 lightEnergy =// light.position * ;
+            Vector3 lightEnergy =light.intensity ;
 
             //reflected light => entry-wise product
             result.X = lightEnergy.X * color.X;
@@ -114,8 +114,10 @@ namespace Template
             result.Z = lightEnergy.Z * color.Z;
 
             //1/r^2 * ELight o Kd * max(0, N * L)
-            result = (float)(1 / Math.Pow(radius, 2)) * result * Math.Max(0, Vector3.Dot(inter.normal, l));
-            
+            /*float a = (float)(1 / Math.Pow(radius, 2));
+            float b = Math.Max(0, Vector3.Dot(inter.normal, -l));*/
+            result = (float)(1 / Math.Pow(radius, 2)) * result * Math.Max(0, Vector3.Dot(inter.normal, -l));
+            return result;
 
         }
 
@@ -132,6 +134,11 @@ namespace Template
 
             GL.Begin(PrimitiveType.Points);
             GL.Vertex2(camera.position.Xz);
+            GL.Color3(0, 255, 0);
+            foreach(Light light in scene.lights )
+            {
+                GL.Vertex2(light.position.Xz);
+            }
             GL.End();
 
             GL.Begin(PrimitiveType.Lines);

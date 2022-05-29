@@ -23,7 +23,8 @@ namespace Template
 
         public void calculateNormal()
         {
-            normal = nearestPrimetive.position - point;
+            normal = (nearestPrimetive.position - point);
+            normal.Normalize();
         }
     }
 }

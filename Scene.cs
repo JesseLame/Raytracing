@@ -21,11 +21,11 @@ namespace Template
 
             floorPlane = new Plane(new Vector3(0, 1, 0), 4f, new Vector3(0, 0, 0));
 
-            Primitive sphere1 = new Sphere(new Vector3(-3.5f, 0, 6f), 1.5f, new Vector3(1, 0, 0));
+            Primitive sphere1 = new Sphere(new Vector3(-3.5f, 0, 6f), 0.5f ,new Vector3(1, 0, 0));
             Primitive sphere2 = new Sphere(new Vector3(0f, 0, 6f), 1.5f, new Vector3(0, 1, 0));
             Primitive sphere3 = new Sphere(new Vector3(3.5f, 0, 6f), 1.5f, new Vector3(0, 0, 1));
 
-            Light light = new Light(new Vector3(-5, 0, 5.5f), new Vector3(1,1,1));
+            Light light = new Light(new Vector3(-5, 0, 2f), new Vector3(3,3,3));
 
             lights.Add(light);
 
