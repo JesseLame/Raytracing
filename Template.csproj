@@ -51,6 +51,7 @@
     <Compile Include="Camera.cs" />
     <Compile Include="Intersection.cs" />
     <Compile Include="Light.cs" />
+    <Compile Include="Material.cs" />
     <Compile Include="MyApplication.cs" />
     <Compile Include="Primitive.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -14,11 +14,22 @@ namespace Template
         public Vector3 normal;
         public Vector3 point;
 
-        public Intersection(float distance, Primitive nearestPrimetive, Vector3 normal)
+        public Intersection(float distance, Primitive nearestPrimetive)
         {
             this.distance = distance;
             this.nearestPrimetive = nearestPrimetive;
-            this.normal = normal;
+            //this.normal = normal;
+        }
+
+        public void calculateNormal()
+        {
+            if (nearestPrimetive == null)
+                return;
+
+            if (nearestPrimetive.GetType() == typeof(Sphere))
+                normal = (point - nearestPrimetive.position).Normalized();
+            else
+                normal = nearestPrimetive.normal;
         }
     }
 }
