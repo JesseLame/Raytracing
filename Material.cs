@@ -11,10 +11,15 @@ namespace Template
     public abstract class Material
     {
         public Vector3 color;
+        public Vector3 ambientCoefficient;
+        public Vector3 ambientLight;
 
         public Material(Vector3 color)
         {
             this.color = color;
+            ambientLight = new Vector3(0.2f, 0.2f, 0.2f);
+            //RGB val never lower then 0
+            ambientCoefficient = new Vector3(Math.Max(0, color.X - 0.2f), Math.Max(0, color.Y - 0.2f), Math.Max(0, color.Z - 0.2f));
         }
 
         public Vector3 calcLight(Vector3 i, Intersection inter, Scene scene, Vector3 cameraOrigin)
@@ -25,6 +30,7 @@ namespace Template
 
             foreach (Light light in scene.lights)
             {
+                Vector3 illumination = Vector3.Zero;
                 l = light.position - i;
                 distanceLight = l.Length;
                 l.Normalize();
@@ -37,16 +43,24 @@ namespace Template
                 {
                     Vector3 nearistPColor = inter.nearestPrimetive.material.color;
 
-                    retColor.X = light.intensity.X * nearistPColor.X;
-                    retColor.Y = light.intensity.Y * nearistPColor.Y;
-                    retColor.Z = light.intensity.Z * nearistPColor.Z;
+                    illumination.X = light.intensity.X * nearistPColor.X;
+                    illumination.Y = light.intensity.Y * nearistPColor.Y;
+                    illumination.Z = light.intensity.Z * nearistPColor.Z;
 
                     float dot = Vector3.Dot(inter.normal, l);
-                    retColor = (1 / distanceLight) * retColor * Math.Max(0, dot);
+                    illumination = (1 / distanceLight) * illumination * Math.Max(0, dot);
 
-                    retColor += this.colorCalc(retColor,distanceLight, light, inter, l, cameraOrigin);
+                    illumination += this.colorCalc(illumination, distanceLight, light, inter, l, cameraOrigin);
+                    
                 }
+
+                //Add for every light to the return color
+                retColor += illumination;
             }
+
+            retColor.X += ambientLight.X * ambientCoefficient.X;
+            retColor.Y += ambientLight.Y * ambientCoefficient.Y;
+            retColor.Z += ambientLight.Z * ambientCoefficient.Z;
 
             return retColor;
         }

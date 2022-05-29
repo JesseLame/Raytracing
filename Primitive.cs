@@ -98,7 +98,6 @@ namespace Template
         public Plane(Vector3 normal, Vector3 side1, Vector3 side2, Vector3 position, Material material) : base( material)
         {
             this.normal = normal.Normalized();
-            //(-AD, -BD, -CD) point on plane where normal vector = (A,B,C) and D = distance
             this.position = position;
             this.side1 = side1;
             this.side2 = side2;
@@ -114,7 +113,7 @@ namespace Template
             //Kinda woring
             //float denominator = Vector3.Dot(ray.direction, -normal);
 
-            //if (denominator > 0.00001f)
+            //if (denominator > 0.0001f)
             //{
             //    float t = Vector3.Dot(position - ray.origin, normal) / denominator;
 
@@ -127,26 +126,20 @@ namespace Template
             //    return Int32.MaxValue;
             //}
 
-            float denominator = Vector3.Dot(ray.direction, -normal);
+            float dotproduct = Vector3.Dot(ray.direction, -normal);
 
-            if (denominator > 0.00001f)
+            if (dotproduct > 0.0001f)
             {
-                float t = Vector3.Dot((position - ray.origin), normal) / denominator;
-
-                Vector3 p = ray.origin + ray.direction * t;
-
-                return p.Length;
+                return Vector3.Dot(position - ray.origin, -normal) / dotproduct;
             }
-            else
-            {
-                return Int32.MaxValue;
-            }
+            return int.MaxValue;
 
-            
-            //if(Vector3.Dot(ray.direction, normal) != 0)
+
+            //if (denominator > 0)
             //{
-            //    float a = Vector3.Dot((position - ray.origin), normal) / Vector3.Dot(ray.direction, normal);
+            //    float a = Vector3.Dot((position - ray.origin), normal) / denominator;
             //    Vector3 p = ray.origin + a * ray.direction;
+
 
             //}
         }
