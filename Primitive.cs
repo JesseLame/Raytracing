@@ -127,11 +127,11 @@ namespace Template
             //    return Int32.MaxValue;
             //}
 
-            float denominator = Vector3.Dot(ray.direction, normal);
+            float denominator = Vector3.Dot(ray.direction, -normal);
 
             if (denominator > 0.00001f)
             {
-                float t = Vector3.Dot(-(position - ray.origin), normal) / denominator;
+                float t = Vector3.Dot((position - ray.origin), normal) / denominator;
 
                 Vector3 p = ray.origin + ray.direction * t;
 
@@ -142,7 +142,7 @@ namespace Template
                 return Int32.MaxValue;
             }
 
-            //Nina code TODO afmaken
+            
             //if(Vector3.Dot(ray.direction, normal) != 0)
             //{
             //    float a = Vector3.Dot((position - ray.origin), normal) / Vector3.Dot(ray.direction, normal);

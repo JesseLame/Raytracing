@@ -31,11 +31,5 @@ namespace Template
             else
                 normal = nearestPrimetive.normal;
         }
-
-        public void calculateNormal()
-        {
-            normal = (nearestPrimetive.position - point);
-            normal.Normalize();
-        }
     }
 }

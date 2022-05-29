@@ -43,8 +43,7 @@ namespace Template
         //berekent bij Punt I van intersection met ray de kleur van de pixel 
         public Vector3 calcPixelColor(Intersection inter)
         {
-            Vector3 pixelColor = inter.nearestPrimetive.color;
-            float distanceLight;
+            //Vector3 pixelColor = inter.nearestPrimetive.material.color;
            //vector from light to intersection point
             Vector3 l;
 
@@ -114,7 +113,7 @@ namespace Template
 
             GL.Begin(PrimitiveType.Points);
             GL.Vertex2(camera.position.Xz);
-            GL.Color3(0, 255, 0);
+            GL.Color3(0, 1, 0);
             foreach(Light light in scene.lights )
             {
                 GL.Vertex2(light.position.Xz);
@@ -122,6 +121,7 @@ namespace Template
             GL.End();
 
             GL.Begin(PrimitiveType.Lines);
+            GL.Color3(1, 1, 1);
             GL.Vertex2(camera.plane1.Xz);
             GL.Vertex2(camera.plane2.Xz);
             GL.End();
@@ -159,11 +159,6 @@ namespace Template
             Vector3 l;
             Vector3 i = inter.point;
 
-            //Start with black 
-            //If there are no light sources it remains black
-            Vector3 retColor = new Vector3(0, 0, 0);
-
-            //GL.Begin(PrimitiveType.Lines);
             GL.Color3(new Vector3(1, 1, 1));
             foreach (Light light in scene.lights)
             {
@@ -181,7 +176,6 @@ namespace Template
                     GL.Vertex2(light.position.Xz);
                 }
             }
-            //GL.End();
         }
 
 
