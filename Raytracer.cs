@@ -13,6 +13,7 @@ namespace Template
         public Scene scene;
         public Camera camera;
         public Surface screen;
+        int MAXNUMBERBOUNCES = 5;
 
         public Raytracer()
         {
@@ -32,18 +33,39 @@ namespace Template
                 for(int y = 0; y < screen.height; y++)
                 {
                     Ray ray = camera.Ray(x, y);
-                    Intersection inter = scene.ClosestIntersection(ray);
-                    Vector3 color = calcPixelColor(inter);
+                    //Vector3 color = trace(ray);
+
+                    //Intersection inter = scene.ClosestIntersection(ray);
+                    Vector3 color = calcPixelColor(ray, MAXNUMBERBOUNCES);
 
                     screen.pixels[x + y * screen.width] = MixColor((int)(color.X * 255), (int)(color.Y * 255), (int)(color.Z * 255));
                 }
             }
         }
 
-        //berekent bij Punt I van intersection met ray de kleur van de pixel 
-        public Vector3 calcPixelColor(Intersection inter)
+        public Vector3 trace(Ray ray)
         {
-            //Vector3 pixelColor = inter.nearestPrimetive.material.color;
+            Intersection inter = scene.ClosestIntersection(ray);
+            Vector3 color = calcPixelColor(ray, MAXNUMBERBOUNCES);
+
+            if (inter.nearestPrimetive == null)
+                return Vector3.Zero;
+
+            if (inter.nearestPrimetive.material.isMirror && ray.numberofBounces < 20)
+            {
+                Ray secondaryRay = new Ray(ray.direction - (2 * Vector3.Dot(ray.direction, inter.normal) * inter.normal),inter.point,0);
+                secondaryRay.numberofBounces = ray.numberofBounces + 1;
+                color = color * trace(secondaryRay);
+            }
+
+            return color;
+        }
+
+        //berekent bij Punt I van intersection met ray de kleur van de pixel 
+        public Vector3 calcPixelColor(Ray ray, int numberOfbounces)
+        {
+            Intersection inter = scene.ClosestIntersection(ray);
+
            //vector from light to intersection point
             Vector3 l;
 
@@ -55,50 +77,26 @@ namespace Template
             Vector3 retColor = new Vector3(0, 0, 0);
 
             //No intersection pizel should be black
-            if (inter.nearestPrimetive == null)
+            //Or tomany bounces als return black
+            if (inter.nearestPrimetive == null || numberOfbounces == 0)
                 return retColor;
 
             retColor = inter.nearestPrimetive.material.calcLight(i,inter, scene, camera.position);
-            //retColor = calculateillumination(i, inter.nearestPrimetive, inter);
+
+            if(inter.nearestPrimetive.material.isMirror)
+            {                
+                Ray secondaryRay = makeSecondaryRay(ray, inter);
+                Vector3 reflectionColor = calcPixelColor(secondaryRay, numberOfbounces - 1);
+                retColor = inter.nearestPrimetive.material.reflaction * reflectionColor + (1 - inter.nearestPrimetive.material.reflaction) * retColor;
+            }
+
             return retColor;
         }
 
-        
-
-
-        public bool hasLight(Vector3 i)
+        public Ray makeSecondaryRay(Ray ray, Intersection inter)
         {
-            float distanceLight;
-            Vector3 l;
-            Vector3 lightEnergy;
-
-            foreach(Light light in scene.lights)
-            {
-                l = light.position - i;
-                distanceLight = l.Length;
-                l.Normalize();
-
-                Intersection inter = scene.ClosestIntersection(new Ray(l, i, distanceLight));
-                if ((inter.distance < distanceLight - 1) && 1 < inter.distance)
-                { }
-                else
-                {
-                    //lightColor(light, distanceLight);
-                }
-            }
-
-
-            return true;
+            return new Ray(ray.direction - (2 * Vector3.Dot(ray.direction, inter.normal) * inter.normal), inter.point * 0.1f, 10f);
         }
-
-        //Calc of light energy
-        //public Vector3 lightColor(Light light, float radius)
-        //{
-        //    Vector3 lightEnergy = light.position * (float)(1 / Math.Pow(radius, 2));
-
-        //}
-
-        
 
         public void drawDebug()
         {
@@ -146,11 +144,27 @@ namespace Template
                 GL.Vertex2(camera.position.Xz);
                 GL.Vertex2(camera.position.X + ray.direction.X * inter.distance, camera.position.Z + ray.direction.Z * inter.distance);
                 if(inter.nearestPrimetive != null)
+                {
                     drawShadowRay(ray, inter);
+
+                    if (inter.nearestPrimetive.material.isMirror)
+                        drawSecondaryRay(ray, inter);
+                }                
             }
             GL.End();
 
             
+        }
+
+        public void drawSecondaryRay(Ray ray, Intersection inter)
+        {
+
+            Ray secondRay = makeSecondaryRay(ray, inter);
+            GL.Color3(new Vector3(1, 1, 0));
+            GL.Vertex2(inter.point.Xz);
+            Vector3 point = secondRay.origin + secondRay.direction * secondRay.distance;
+            GL.Vertex2(point.Xz);
+
         }
 
         public void drawShadowRay(Ray ray, Intersection inter)

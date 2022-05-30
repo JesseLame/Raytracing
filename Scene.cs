@@ -19,11 +19,11 @@ namespace Template
             primitives = new List<Primitive>();
             lights = new List<Light>();
 
-            floorPlane = new Plane(new Vector3(0, 1, 0),new Vector3(), new Vector3(), new Vector3(0, -2, 6) ,new Diffuse(new Vector3(1,1,0)));
+            floorPlane = new Plane(new Vector3(0, 1, 0),new Vector3(), new Vector3(), new Vector3(0, -2, 6) ,new Diffuse(new Vector3(1,1,0), false));
 
-            Primitive sphere1 = new Sphere(new Vector3(-3.5f, 0, 6f), 1.5f,new Diffuse(new Vector3(1, 0, 0)));
-            Primitive sphere2 = new Sphere(new Vector3(0f, 0, 6f), 1.5f, new Diffuse(new Vector3(0, 1, 0)));
-            Primitive sphere3 = new Sphere(new Vector3(3.5f, 0, 6f), 1.5f,new Glossy(new Vector3(1, 1,1), new Vector3(0, 0, 1), 2));
+            Primitive sphere1 = new Sphere(new Vector3(-3.5f, 0, 6f), 1.5f,new Diffuse(new Vector3(1, 0, 0), false));
+            Primitive sphere2 = new Sphere(new Vector3(0f, 0, 6f), 1.5f, new Mirror(new Vector3(1, 1, 1), true, 1));
+            Primitive sphere3 = new Sphere(new Vector3(3.5f, 0, 6f), 1.5f,new Glossy(1, new Vector3(0, 0, 1), 2, false));
             //Primitive sphere4 = new Sphere(new Vector3(6.5f, 0, 6f), 1.5f, new Diffuse(new Vector3(0, 0, 1)));
             //Primitive sphere4 = new Sphere(new Vector3(3.5f, 0, 6f), 1.5f, new Diffuse(new Vector3(0, 0, 1)));
 

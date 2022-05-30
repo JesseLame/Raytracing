@@ -13,9 +13,12 @@ namespace Template
         public Vector3 color;
         public Vector3 ambientCoefficient;
         public Vector3 ambientLight;
+        public float reflaction;
+        public bool isMirror;
 
-        public Material(Vector3 color)
+        public Material(Vector3 color, bool isMirror)
         {
+            this.isMirror = isMirror;
             this.color = color;
             ambientLight = new Vector3(0.2f, 0.2f, 0.2f);
             //RGB val never lower then 0
@@ -75,11 +78,11 @@ namespace Template
 
     public class Glossy : Material
     {
-        Vector3 specularCoefficient;
+        float specularCoefficient;
         float exponent;
         
 
-        public Glossy(Vector3 specularCoefficient, Vector3 color, float exponent) : base(color)
+        public Glossy(float specularCoefficient, Vector3 color, float exponent, bool isMirror) : base(color, isMirror)
         {
             this.specularCoefficient = specularCoefficient;
             this.exponent = exponent;
@@ -93,9 +96,11 @@ namespace Template
 
             float dotVR = Vector3.Dot(v.Normalized(), r.Normalized());
 
-            color.X = light.intensity.X * specularCoefficient.X;
-            color.Y = light.intensity.Y * specularCoefficient.Y;
-            color.Z = light.intensity.Z * specularCoefficient.Z;
+            //color.X = light.intensity.X * specularCoefficient.X;
+            //color.Y = light.intensity.Y * specularCoefficient.Y;
+            //color.Z = light.intensity.Z * specularCoefficient.Z;
+
+            color = light.intensity * specularCoefficient;
 
             color = (1 / distanceLight) * color * (float)Math.Pow(Math.Max(0, dotVR),exponent);
 
@@ -103,9 +108,25 @@ namespace Template
         }
     }
 
+    public class Mirror : Material
+    {
+
+        public Mirror(Vector3 color, bool isMirror, float reflaction) : base(color, isMirror)
+        {
+            this.reflaction = reflaction;
+        }
+
+        public override Vector3 colorCalc(Vector3 color, float distanceLight, Light light, Intersection inter, Vector3 l, Vector3 origin)
+        {
+
+
+            return color;
+        }
+    }
+
     public class Diffuse : Material
     {
-        public Diffuse(Vector3 color) : base(color)
+        public Diffuse(Vector3 color, bool isMirror) : base(color, isMirror)
         {
         }
 
