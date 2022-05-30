@@ -111,28 +111,20 @@ namespace Template
         public override float intersects(Ray ray)
         {
             //Kinda woring
-            //float denominator = Vector3.Dot(ray.direction, -normal);
+            float denominator = Vector3.Dot(ray.direction, -normal);
 
-            //if (denominator > 0.0001f)
-            //{
-            //    float t = Vector3.Dot(position - ray.origin, normal) / denominator;
-
-            //    Vector3 p = ray.origin + ray.direction * t;
-
-            //    return p.Length;
-            //}
-            //else
-            //{
-            //    return Int32.MaxValue;
-            //}
-
-            float dotproduct = Vector3.Dot(ray.direction, -normal);
-
-            if (dotproduct > 0.0001f)
+            if (denominator > 0.0001f)
             {
-                return Vector3.Dot(position - ray.origin, -normal) / dotproduct;
+                float t = Vector3.Dot(position - ray.origin, normal) / denominator;
+
+                Vector3 p = ray.origin + ray.direction * t;
+
+                return -t;
             }
-            return int.MaxValue;
+            else
+            {
+                return Int32.MaxValue;
+            }
 
 
             //if (denominator > 0)
