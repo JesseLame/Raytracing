@@ -14,8 +14,8 @@ namespace Template
         public Surface screen;
 
         public Vector3 position;
-        Vector3 lookDirection;
-        Vector3 upDirection;
+        public Vector3 lookDirection;
+        public Vector3 upDirection;
         public Vector3 plane1, plane2, plane3, plane4;
 
         Vector3 planeVec;

@@ -16,9 +16,8 @@ namespace Template
         public float reflaction;
         public bool isMirror;
 
-        public Material(Vector3 color, bool isMirror)
+        public Material(Vector3 color)
         {
-            this.isMirror = isMirror;
             this.color = color;
             ambientLight = new Vector3(0.2f, 0.2f, 0.2f);
             //RGB val never lower then 0
@@ -54,8 +53,7 @@ namespace Template
                     illumination = (1 / distanceLight) * illumination * Math.Max(0, dot);
 
                     illumination += this.colorCalc(illumination, distanceLight, light, inter, l, cameraOrigin);
-                    
-                }
+                 }
 
                 //Add for every light to the return color
                 retColor += illumination;
@@ -72,7 +70,7 @@ namespace Template
 
         public bool shadow(float obstacleDis, float lightDis)
         {
-            return ((obstacleDis < lightDis - 1f) && (1f < obstacleDis));
+            return ((obstacleDis < lightDis));
         }
     }
 
@@ -82,10 +80,11 @@ namespace Template
         float exponent;
         
 
-        public Glossy(float specularCoefficient, Vector3 color, float exponent, bool isMirror) : base(color, isMirror)
+        public Glossy(float specularCoefficient, Vector3 color, float exponent) : base(color)
         {
             this.specularCoefficient = specularCoefficient;
             this.exponent = exponent;
+            this.isMirror = false;
         }
 
         public override Vector3 colorCalc(Vector3 color, float distanceLight, Light light, Intersection inter, Vector3 l, Vector3 origin)
@@ -111,28 +110,47 @@ namespace Template
     public class Mirror : Material
     {
 
-        public Mirror(Vector3 color, bool isMirror, float reflaction) : base(color, isMirror)
+        public Mirror(Vector3 color, float reflaction) : base(color)
         {
             this.reflaction = reflaction;
+            this.isMirror = true;
         }
 
         public override Vector3 colorCalc(Vector3 color, float distanceLight, Light light, Intersection inter, Vector3 l, Vector3 origin)
         {
-
-
             return color;
         }
     }
 
     public class Diffuse : Material
     {
-        public Diffuse(Vector3 color, bool isMirror) : base(color, isMirror)
+        public Diffuse(Vector3 color) : base(color)
         {
+            isMirror = false;
         }
 
         public override Vector3 colorCalc(Vector3 retColor, float distanceLight, Light light, Intersection inter, Vector3 l, Vector3 origin)
         {
             return retColor;                
+        }
+    }
+
+    public class Checker : Material
+    {
+        public Checker(Vector3 color) : base(color)
+        {
+            isMirror = false;
+        }
+
+        public override Vector3 colorCalc(Vector3 retColor, float distanceLight, Light light, Intersection inter, Vector3 l, Vector3 origin)
+        {
+            float distance = (inter.point - origin).Length;
+            if((int)distance % 2 != 0)
+            {
+                return Vector3.Zero;
+            }
+
+            return retColor;
         }
     }
 }

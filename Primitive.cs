@@ -27,7 +27,6 @@ namespace Template
 
     public class Sphere : Primitive
     {
-        //Vector3 position;
         float radius;
 
         public Sphere(Vector3 position, float radius, Material material) : base(material)
@@ -57,23 +56,9 @@ namespace Template
 
         public override float intersects(Ray ray)
         {
-            //Vector3 t = ray.origin + Vector3.Dot(position - ray.origin, ray.direction) * ray.direction;
-            //float y = (float)Math.Sqrt(Math.Pow(t.X - position.X, 2) + Math.Pow(t.Y - position.Y, 2) + Math.Pow(t.Z - position.Z, 2));
-            //float x = (float)Math.Sqrt(Math.Pow(radius, 2) - Math.Pow(y, 2));
-
-            //float t1 = Vector3.Dot(position - ray.origin, ray.direction) - x;
-            //float t2 = Vector3.Dot(position - ray.origin, ray.direction) + x;
-
-
-            //float delta = (float)(Math.Pow(Vector3.Dot(ray.direction, ray.origin - position), 2) - (Math.Pow(Math.Sqrt(Math.Pow((position.X - ray.origin.X), 2) + Math.Pow(position.Y - ray.origin.Y, 2)),2) - Math.Pow(radius, 2)));
-            //float t = -(float)((Vector3.Dot(ray.direction, (ray.origin - position)) + Math.Sqrt(delta)));
-
-
             Vector3 c = position - ray.origin;
             float t = Vector3.Dot(c, ray.direction);
             Vector3 tVec = ray.origin + t * ray.direction;
-
-            //Vector3 yVec = tVec - position;
 
             float y = (float)Math.Sqrt(Math.Pow(tVec.X - position.X, 2) + Math.Pow(tVec.Y - position.Y, 2));
             float x = (float)Math.Sqrt(Math.Pow(radius, 2) - Math.Pow(y, 2));
@@ -81,8 +66,10 @@ namespace Template
             float t1 = Vector3.Dot(position - ray.origin, ray.direction) - x;
             float t2 = Vector3.Dot(position - ray.origin, ray.direction) + x;
 
-            if (t1 < Int32.MaxValue)
+            if (t1 < Int32.MaxValue && t1 >= 0)
                 return t1;
+            /*else if (t1 < 0 && t2 > 0)
+                return t2;*/
 
             return Int32.MaxValue;
         }
@@ -92,15 +79,13 @@ namespace Template
 
     class Plane : Primitive
     {
-        Vector3 plane1, plane2, plane3, plane4;
-        Vector3 side1, side2;
+        float distance;
 
-        public Plane(Vector3 normal, Vector3 side1, Vector3 side2, Vector3 position, Material material) : base( material)
+        public Plane(Vector3 normal, Vector3 position, Material material) : base( material)
         {
             this.normal = normal.Normalized();
             this.position = position;
-            this.side1 = side1;
-            this.side2 = side2;
+            this.distance = Vector3.Dot(normal, position);
         }
 
         public override void drawDebug(Surface screen)
@@ -111,29 +96,14 @@ namespace Template
         public override float intersects(Ray ray)
         {
             //Kinda woring
-            float denominator = Vector3.Dot(ray.direction, -normal);
+            float denominator = Vector3.Dot(ray.direction, normal);
 
-            if (denominator > 0.0001f)
-            {
-                float t = Vector3.Dot(position - ray.origin, normal) / denominator;
+            float t = (distance  - Vector3.Dot(ray.origin, normal)) / denominator;
 
-                Vector3 p = ray.origin + ray.direction * t;
-
-                return -t;
-            }
-            else
-            {
-                return Int32.MaxValue;
-            }
-
-
-            //if (denominator > 0)
-            //{
-            //    float a = Vector3.Dot((position - ray.origin), normal) / denominator;
-            //    Vector3 p = ray.origin + a * ray.direction;
-
-
-            //}
+            if(t > 0)
+                return t;
+            
+            return Int32.MaxValue;
         }
     }
 }

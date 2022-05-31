@@ -43,33 +43,13 @@ namespace Template
             }
         }
 
-        public Vector3 trace(Ray ray)
-        {
-            Intersection inter = scene.ClosestIntersection(ray);
-            Vector3 color = calcPixelColor(ray, MAXNUMBERBOUNCES);
-
-            if (inter.nearestPrimetive == null)
-                return Vector3.Zero;
-
-            if (inter.nearestPrimetive.material.isMirror && ray.numberofBounces < 20)
-            {
-                Ray secondaryRay = new Ray(ray.direction - (2 * Vector3.Dot(ray.direction, inter.normal) * inter.normal),inter.point,0);
-                secondaryRay.numberofBounces = ray.numberofBounces + 1;
-                color = color * trace(secondaryRay);
-            }
-
-            return color;
-        }
 
         //berekent bij Punt I van intersection met ray de kleur van de pixel 
         public Vector3 calcPixelColor(Ray ray, int numberOfbounces)
         {
             Intersection inter = scene.ClosestIntersection(ray);
 
-           //vector from light to intersection point
-            Vector3 l;
-
-            Vector3 i = inter.point;
+            Vector3 i = inter.point - 0.001f * ray.direction;
             
 
             //Start with black 
@@ -81,13 +61,13 @@ namespace Template
             if (inter.nearestPrimetive == null || numberOfbounces == 0)
                 return retColor;
 
-            retColor = inter.nearestPrimetive.material.calcLight(i,inter, scene, camera.position);
+            retColor = inter.nearestPrimetive.material.calcLight(i, inter, scene, camera.position);
 
             if(inter.nearestPrimetive.material.isMirror)
             {                
                 Ray secondaryRay = makeSecondaryRay(ray, inter);
                 Vector3 reflectionColor = calcPixelColor(secondaryRay, numberOfbounces - 1);
-                retColor = inter.nearestPrimetive.material.reflaction * reflectionColor + (1 - inter.nearestPrimetive.material.reflaction) * retColor;
+                retColor = inter.nearestPrimetive.material.reflaction * reflectionColor; //+ (1 - inter.nearestPrimetive.material.reflaction) * retColor;
             }
 
             return retColor;
@@ -95,7 +75,7 @@ namespace Template
 
         public Ray makeSecondaryRay(Ray ray, Intersection inter)
         {
-            return new Ray(ray.direction - (2 * Vector3.Dot(ray.direction, inter.normal) * inter.normal), inter.point * 0.1f, 10f);
+            return new Ray(ray.direction - (2 * Vector3.Dot(ray.direction, inter.normal) * inter.normal), inter.point, 10f);
         }
 
         public void drawDebug()
