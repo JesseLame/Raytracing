@@ -20,7 +20,8 @@ namespace Template
 
         Vector3 planeVec;
 
-        float distToCamera = 1.5f;
+        public float distToCamera = 1.5f;
+        public float viewDegree = 60f;
 
         public Camera(Vector3 pos, Vector3 look, Vector3 up, Surface s)
         {
@@ -39,20 +40,24 @@ namespace Template
             Vector3 planeCenter = position + (lookDirection * distToCamera);
 
             //Left uppercorner
-            plane1 = planeCenter + planeVec + upDirection;
+            plane1 = planeCenter + planeVec * degreeToRad(viewDegree) + upDirection;
 
             //Right uppercorner
-            plane2 = planeCenter - planeVec + upDirection;
+            plane2 = planeCenter - planeVec * degreeToRad(viewDegree) + upDirection;
 
             //Right downcorner
-            plane3 = planeCenter - planeVec - upDirection;
+            plane3 = planeCenter - planeVec * degreeToRad(viewDegree) - upDirection;
 
             //Left down corner
-            plane4 = planeCenter + planeVec - upDirection;
+            plane4 = planeCenter + planeVec * degreeToRad(viewDegree) - upDirection;
         }
 
+        public float degreeToRad(float degree)
+        {
+            return degree * ((float)Math.PI / 180);
+        }
        
-
+        //Shoot ray through screen
         public Ray Ray(int x, int y)
         {
             Vector3 u = plane2 - plane1;

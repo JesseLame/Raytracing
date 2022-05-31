@@ -54,6 +54,8 @@ namespace Template
             GL.End();
         }
 
+        //Returns the intersection distance if there is an intersection
+        //Otherwise return maxvalue
         public override float intersects(Ray ray)
         {
             Vector3 c = position - ray.origin;
@@ -75,8 +77,6 @@ namespace Template
         }
     }
 
-    
-
     class Plane : Primitive
     {
         float distance;
@@ -93,6 +93,8 @@ namespace Template
             
         }
 
+        //Returns intersection point if there is one
+        //Otherwise return maxvalue
         public override float intersects(Ray ray)
         {
             //Kinda woring

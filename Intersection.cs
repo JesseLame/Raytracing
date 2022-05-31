@@ -18,9 +18,9 @@ namespace Template
         {
             this.distance = distance;
             this.nearestPrimetive = nearestPrimetive;
-            //this.normal = normal;
         }
 
+        //Calculate the normal based on what kind of primitive
         public void calculateNormal()
         {
             if (nearestPrimetive == null)
